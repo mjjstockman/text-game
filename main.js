@@ -1,10 +1,20 @@
+let inventory = [];
+
 class Room {
   constructor(name, description) {
     this._name = name;
     this._description = description;
     this._linkedRooms = {};
     this._character = "";
-    // this._objects = {};
+    this._linkedItems = {};
+  }
+
+  linkRoom(direction, room) {
+    this._linkedRooms[direction] = room;
+  }
+
+  linkItem(item) {
+    this._linkedItems[item.name] = item;
   }
 
   set character(value) {
@@ -45,10 +55,6 @@ class Room {
     );
   }
 
-  linkRoom(direction, roomToLink) {
-    this._linkedRooms[direction] = roomToLink;
-  }
-
   move(direction) {
     if (direction in this._linkedRooms) {
       return this._linkedRooms[direction];
@@ -57,7 +63,48 @@ class Room {
       return this;
     }
   }
+
+  pickUp(item) {
+    if (item in this._linkedItems) {
+        console.log("item in room");
+      inventory.push(item);
+      // console.log(currentRoom._linkedItems)
+      delete this._linkedItems[item];
+      alert(`You have picked up ${item}.`);
+    //   displayUpdate(item)
+      // console.log(currentRoom._linkedItems)
+    } else {
+      console.log("item not in room");
+      return    
+    }
+  }
 }
+
+class Item {
+  constructor(name, description) {
+    this._name = name;
+    this._description = description;
+  }
+
+  get name() {
+    return this._name;
+  }
+
+  get description() {
+    return this.description;
+  }
+
+  set name(value) {
+    this._name = value;
+  }
+
+  set description(value) {
+    this._description = value;
+  }
+}
+
+const Armbands = new Item("armbands", "a pair of inflatable armbands");
+const Key = new Item("key", "a small key");
 
 class Character {
   constructor(name, description, conversation) {
@@ -126,17 +173,16 @@ const Library = new Room(
 );
 const Kitchen = new Room(
   "Kitchen",
-  "a basic kitchen with a fridge, cooker and sink."
+  "a basic kitchen with a fridge, cooker and sink. There are some armbands in the sink."
 );
 const DiningRoom = new Room(
   "Dining Room",
   "a large room with a long table and chairs. The table is set for a meal."
 );
 const Garden = new Room(
-    "Garden",
-    "a large garden with a lawn and flower beds."
-  );
-
+  "Garden",
+  "a large garden with a lawn and flower beds."
+);
 
 Pool.linkRoom("north", Library);
 Pool.linkRoom("east", DiningRoom);
@@ -149,10 +195,11 @@ DiningRoom.linkRoom("north", Kitchen);
 DiningRoom.linkRoom("west", Pool);
 Garden.linkRoom("south", Library);
 
-
-
 const Dave = new Character("Dave", "a zombie", "Brrlgrh... rgrhl... brains...");
 Kitchen.character = Dave;
+
+Kitchen.linkItem(Armbands);
+// console.log(Kitchen._linkedItems);
 
 let currentRoom;
 
@@ -173,22 +220,43 @@ const displayRoomInfo = (room) => {
   document.getElementById("usertext").focus();
 };
 
+const displayUpdates = () => {
+    let updateContent =
+    "<p>" + room.describe() + "</p>" + "<p>" + occupantMsg + "</p>";
+    document.getElementById("updateArea").innerHTML = updateContent;
+    let occupantMsg = "";
+  
+    if (room.character === "") {
+      occupantMsg = "There is no one in this area.";
+    } else {
+      occupantMsg = `${room.character.talk()}`;
+    }
+  
+    let textContent =
+      "<p>" + room.describe() + "</p>" + "<p>" + occupantMsg + "</p>";
+  
+    document.getElementById("textarea").innerHTML = textContent;
+    document.getElementById("usertext").value = "";
+    document.getElementById("usertext").focus();
+  };
+
 const startGame = () => {
   // this is the starting room.
-  currentRoom = DiningRoom;
+  currentRoom = Kitchen;
   displayRoomInfo(currentRoom);
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       const command = document.getElementById("usertext").value.toLowerCase();
       const directions = ["north", "south", "east", "west"];
+      //   const interact = ["pick up", "use"];
       if (directions.includes(command)) {
         currentRoom = currentRoom.move(command);
         displayRoomInfo(currentRoom);
       } else {
-        document.getElementById("usertext").value = "";
-        alert("That is not a valid command.");
-        return;
+        const commandSplit = command.split("pick up ");
+        const itemToCollect = commandSplit[1];
+        currentRoom.pickUp(itemToCollect);
       }
     }
   });
