@@ -1,4 +1,5 @@
 let inventory = [];
+// let inventory = ["book", "lock pick"];
 
 class Room {
   constructor(name, description) {
@@ -56,6 +57,12 @@ class Room {
   }
 
   move(direction) {
+    if (currentRoom._name === 'Kitchen' && direction === 'north' && (!inventory.includes('lock pick') || !inventory.includes('book'))) {
+      // console.log(direction)
+      alert('You need a lock pick and some knowledge to open the door.')
+      return this
+    }
+    // console.log(currentRoom._name)
     if (direction in this._linkedRooms) {
       return this._linkedRooms[direction];
     } else {
@@ -66,16 +73,17 @@ class Room {
 
   pickUp(item) {
     if (item in this._linkedItems) {
-        console.log("item in room");
+      if (item === "key" && !inventory.includes("armbands")) {
+        alert("You can't swim and drowned.");
+        return;
+      }
       inventory.push(item);
-      // console.log(currentRoom._linkedItems)
+      console.log(inventory);
       delete this._linkedItems[item];
       alert(`You have picked up ${item}.`);
-    //   displayUpdate(item)
-      // console.log(currentRoom._linkedItems)
     } else {
       console.log("item not in room");
-      return    
+      return;
     }
   }
 }
@@ -104,7 +112,8 @@ class Item {
 }
 
 const Armbands = new Item("armbands", "a pair of inflatable armbands");
-const Key = new Item("key", "a small key");
+const LockPick = new Item("lock pick", "a lock pick");
+const Book = new Item("book", 'a book titled "How To Pick Locks"');
 
 class Character {
   constructor(name, description, conversation) {
@@ -186,9 +195,10 @@ const Garden = new Room(
 
 Pool.linkRoom("north", Library);
 Pool.linkRoom("east", DiningRoom);
-Library.linkRoom("north", Garden);
+// Library.linkRoom("north", Garden);
 Library.linkRoom("east", Kitchen);
 Library.linkRoom("south", Pool);
+Kitchen.linkRoom("north", Garden);
 Kitchen.linkRoom("south", DiningRoom);
 Kitchen.linkRoom("west", Library);
 DiningRoom.linkRoom("north", Kitchen);
@@ -199,7 +209,8 @@ const Dave = new Character("Dave", "a zombie", "Brrlgrh... rgrhl... brains...");
 Kitchen.character = Dave;
 
 Kitchen.linkItem(Armbands);
-// console.log(Kitchen._linkedItems);
+Pool.linkItem(LockPick);
+Library.linkItem(Book);
 
 let currentRoom;
 
@@ -221,35 +232,34 @@ const displayRoomInfo = (room) => {
 };
 
 const displayUpdates = () => {
-    let updateContent =
+  let updateContent =
     "<p>" + room.describe() + "</p>" + "<p>" + occupantMsg + "</p>";
-    document.getElementById("updateArea").innerHTML = updateContent;
-    let occupantMsg = "";
-  
-    if (room.character === "") {
-      occupantMsg = "There is no one in this area.";
-    } else {
-      occupantMsg = `${room.character.talk()}`;
-    }
-  
-    let textContent =
-      "<p>" + room.describe() + "</p>" + "<p>" + occupantMsg + "</p>";
-  
-    document.getElementById("textarea").innerHTML = textContent;
-    document.getElementById("usertext").value = "";
-    document.getElementById("usertext").focus();
-  };
+  document.getElementById("updateArea").innerHTML = updateContent;
+  let occupantMsg = "";
+
+  if (room.character === "") {
+    occupantMsg = "There is no one in this area.";
+  } else {
+    occupantMsg = `${room.character.talk()}`;
+  }
+
+  let textContent =
+    "<p>" + room.describe() + "</p>" + "<p>" + occupantMsg + "</p>";
+
+  document.getElementById("textarea").innerHTML = textContent;
+  document.getElementById("usertext").value = "";
+  document.getElementById("usertext").focus();
+};
 
 const startGame = () => {
   // this is the starting room.
-  currentRoom = Kitchen;
+  currentRoom = Library;
   displayRoomInfo(currentRoom);
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       const command = document.getElementById("usertext").value.toLowerCase();
       const directions = ["north", "south", "east", "west"];
-      //   const interact = ["pick up", "use"];
       if (directions.includes(command)) {
         currentRoom = currentRoom.move(command);
         displayRoomInfo(currentRoom);
