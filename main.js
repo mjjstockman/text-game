@@ -29,12 +29,12 @@ class Room {
   }
 
   describe() {
-    const itemNames = Object.values(this._linkedItems).map(
-      (item) => item.name
-    );
-    let description = `Looking around the ${this._name} you can see ${this._description}`
+    const itemNames = Object.values(this._linkedItems).map((item) => item.name);
+    let description = `Looking around the ${this._name} you can see ${this._description}`;
     if (Object.keys(this._linkedItems).length !== 0) {
-      description += ` There is also <strong>${itemNames.join(', ')}</strong> in the room.`;
+      description += ` There is also <strong>${itemNames.join(
+        ", "
+      )}</strong> in the room.`;
     }
     return description;
   }
@@ -228,13 +228,15 @@ const startGame = () => {
           currentRoom.name === "Garden"
         ) {
           clearTimeout(eatenByDog);
-          alert("The dogs are distracted by the meat and YOUN ESCAPE THE HOUSE!!");
+          alert(
+            "The dogs are distracted by the meat and YOUN ESCAPE THE HOUSE!!"
+          );
         }
       } else {
         alert("Invalid command");
         clearTextArea();
       }
-    }
+    } 
   });
 };
 
