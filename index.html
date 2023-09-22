@@ -1,25 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script defer src="main.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css" />
     <title>Adventure Game</title>
-</head>
-<body>
+  </head>
+  <body class="mx-auto">
     <div class="container">
-        <div id="gamearea">
-          <div id="details">
-              <!--content-->
-              <div class="justify-content-center mx-auto text-center">
-                <p id="textarea" class="text-center"></p><br /><br />
-                <input type="text" id="usertext" />
-                <p id="updateArea" class="text-center"></p><br /><br />
-              </div>
+      <h1 class="font-bold text-center text-5xl mt-8">Escape the House</h1>
+      <div id="gamearea">
+        <div id="details">
+          <!--content-->
+          <div class="justify-content-center mx-auto text-center">
+            <p id="textarea" class="text-center mt-8"></p>
+            <br /><br />
+            <input type="text" id="usertext" class="p-2" />
+            <h2 class="mt-8 font-bold text-3xl">Inventory</h2>
+            <ul id="inventoryList"></ul>
           </div>
         </div>
       </div>
-</body>
+
+      <h2 class="text-center font-bold text-3xl mt-5">Map</h2>
+
+      <div style="display: flex; justify-content: center" class="mt-5">
+        <table
+          style="width: 75%; border-collapse: collapse; table-layout: fixed"
+        >
+          <tr>
+            <td
+              id="garden"
+              colspan="2"
+              style="border: 1px solid black; text-align: center; padding: 8px"
+            >
+              Garden
+            </td>
+          </tr>
+          <tr>
+            <td
+              id="library"
+              style="
+                border: 1px solid black;
+                width: 50px;
+                padding: 8px;
+                text-align: center;
+              "
+            >
+              Library
+            </td>
+            <td
+              id="kitchen"
+              style="
+                border: 1px solid black;
+                width: 50px;
+                padding: 8px;
+                text-align: center;
+              "
+            >
+              Kitchen
+            </td>
+          </tr>
+          <tr>
+            <td
+              id="pool"
+              style="
+                border: 1px solid black;
+                width: 50px;
+                padding: 8px;
+                text-align: center;
+              "
+            >
+              Pool
+            </td>
+            <td
+              id="dining room"
+              style="
+                border: 1px solid black;
+                width: 50px;
+                padding: 8px;
+                text-align: center;
+              "
+            >
+              Dining Room
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <h2 class="text-center font-bold text-3xl mt-5">Commands</h2>
+    <ul class=" text-center text-xl mt-5" >
+      <li><span class="font-semibold">move</span><span class="italic"> &lt;north/east/south/west&gt;</span></li>
+      <li><span class="font-semibold">pick up</span><span class="italic"> &lt;item name&gt;</span></li>
+      <li><span class="font-semibold">drop</span> <span class="italic"> &lt;item name&gt;</span></li>
+    </ul>
+  </body>
 </html>
